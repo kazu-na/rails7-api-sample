@@ -1,0 +1,40 @@
+version: '3'
+services:
+  api:
+    container_name: ruby
+    build:
+      context: .
+      dockerfile: ./docker/ruby/Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - db
+    volumes:
+      - ./movie_app:/movie_app
+    env_file:
+      - docker/mysql/settings.env
+    tty: true
+
+  db:
+    container_name: mysql
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    env_file:
+      - docker/mysql/settings.env
+
+  phpmyadmin:
+    container_name: phpMyAdmin
+    image: phpmyadmin:5.1-apache
+    ports:
+      - 9080:80
+    depends_on:
+      - db
+    env_file:
+      - docker/mysql/settings.env
+
+volumes:
+  data:

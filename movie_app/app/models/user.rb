@@ -14,4 +14,17 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 8 },
                        format: { with: VALID_PASSWORD_REGEX },
                        allow_nil: true
+
+  # ユーザー認証(パスワード)
+  # メールアドレスとパスワードで認証します
+  #
+  # @param [String] email
+  # @param [String] password
+  # @return [User]
+  def self.authenticate_user_with_password!(email, password)
+    user = find_by(email: email)&.authenticate(password)
+    raise AuthenticationError if user.nil?
+
+    user
+  end
 end
